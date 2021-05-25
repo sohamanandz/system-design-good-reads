@@ -13,26 +13,26 @@ If you haven’t used pastebin.com before, please try creating a new ‘Paste’
 Ratio of Read:Write 100:1
 ### Request Volume
 #### Request volume
-1 Year -> 50 Million paste bins
-count of paste bin in year = 50,000,000
-count of paste bin in a day = 50,000,000 /(365) ~ 150,000
+- 1 Year -> 50 Million paste bins
+- count of paste bin in year = 50,000,000
+- count of paste bin in a day = 50,000,000 /(365) ~ 150,000
 
-Write Requests per day ~               150,000
-Read Requests per day ~             15,000,000
-Write Requests per hour ~                6,250
-Read Requests per hour ~               625,000
+- Write Requests per day ~               150,000
+- Read Requests per day ~             15,000,000
+- Write Requests per hour ~                6,250
+- Read Requests per hour ~               625,000
 #### User volume
 
 #### Storage Requirement
-Total number of paste bins =  50,000,000 * 2 Years (retention period)
-                           = 100,000,000    
+- Total number of paste bins =  50,000,000 * 2 Years (retention period)
+                             = 100,000,000    
                        
-DB Storage Sizing = 100,000,000 (Total number of paste bins) * 1 KB
+- DB Storage Sizing = 100,000,000 (Total number of paste bins) * 1 KB
           = 100,000,000 KB
           =     100,000 MB
           =         100 GB
           
-File Storage  =   100,000,000 (Total number of paste bins) * 10 MB 
+- File Storage  =   100,000,000 (Total number of paste bins) * 10 MB 
               = 1,000,000,000 MB
               =     1,000,000 GB
               =         1,000 TB
@@ -50,25 +50,28 @@ File Storage  =   100,000,000 (Total number of paste bins) * 10 MB
 
 ## Entities
 ### Users
-id
-name
-email
-created_by
-created_on
-modified_by
-modified_on
-active
+|fields               |
+|---------------------|
+|id                   |
+|name                 |
+|email                |
+|created_by           |
+|created_on           |
+|modified_by          |
+|modified_on          |
+|active               |
 
 ### pastebin
-id
-summary
-content_location
-user_id
-created_by
-created_on
-modified_by
-modified_on
-active
+|fields               |
+|---------------------|
+|id                   |
+|content_location     |
+|user_id              |
+|created_by           |
+|created_on           |
+|modified_by          |
+|modified_on          |
+|active               |
 
 ### hashkey (unique identifier for each pastebin)
 #### We will need 100,000,000 identifiers (Total number of paste bins)
@@ -84,14 +87,14 @@ cached
 
 ## api
 ### users
-/users/create                       (Write)
-/users/user-id/update               (Write)
-/users/user-id/delete               (Write)
-/users/user-id                      (Read)
-
-### pastebin
-/pastebin/create                    (Write)
-/pastebin/pastebin-id/update        (Write)
-/pastebin/pastebin-id/delete        (Write)
-/pastebin/pastebin-id               (Read)
+|api                               | type    |
+|----------------------------------|---------|
+|/users/create                     |  Write  |
+|/users/user-id/update             |  Write  |
+|/users/user-id/delete             |  Write  |
+|/users/user-id                    |  Read   |
+|/pastebin/create                  |  Write  |
+|/pastebin/pastebin-id/update      |  Write  |
+|/pastebin/pastebin-id/delete      |  Write  |
+|/pastebin/pastebin-id             |  Read   |
 
