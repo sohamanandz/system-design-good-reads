@@ -87,14 +87,20 @@ cached
 
 ## api
 ### users
-|api                               | type    |
-|----------------------------------|---------|
-|/users/create                     |  Write  |
-|/users/user-id/update             |  Write  |
-|/users/user-id/delete             |  Write  |
-|/users/user-id                    |  Read   |
-|/pastebin/create                  |  Write  |
-|/pastebin/pastebin-id/update      |  Write  |
-|/pastebin/pastebin-id/delete      |  Write  |
-|/pastebin/pastebin-id             |  Read   |
+|api                               | type    |  access  |
+|----------------------------------|---------|----------|
+|/users/create                     |  Write  |  public  |
+|/users/user-id/update             |  Write  |  public  |
+|/users/user-id/delete             |  Write  |  public  |
+|/users/user-id                    |  Read   |  public  |
+|/pastebin/create                  |  Write  |  public  |
+|/pastebin/pastebin-id/update      |  Write  |  public  |
+|/pastebin/pastebin-id/delete      |  Write  |  public  |
+|/pastebin/pastebin-id             |  Read   |  public  |
+|/hashkey/key/request              |  Write  |  private |
+|/hashkey/key/release              |  Write  |  private |
+
+## Design
+
+![image](https://user-images.githubusercontent.com/81834364/119551652-dc493b00-bd67-11eb-8822-d0cc406670c0.png)
 
