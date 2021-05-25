@@ -50,4 +50,48 @@ File Storage  =   100,000,000 (Total number of paste bins) * 10 MB
 
 ## Entities
 ### Users
+id
+name
+email
+created_by
+created_on
+modified_by
+modified_on
+active
+
 ### pastebin
+id
+summary
+content_location
+user_id
+created_by
+created_on
+modified_by
+modified_on
+active
+
+### hashkey (unique identifier for each pastebin)
+#### We will need 100,000,000 identifiers (Total number of paste bins)
+#### hashkey can include a-z(26), A-Z(26), 0-9(10), .~(2) = 64 characters
+#### using 64 characers and key length of 5 letters (2^6)^5 = (2)^30 = 1,000,000,000 hashkeys
+#### We will be using hashkey of 5 characters
+
+### hashkey
+hashkey
+active
+cached
+
+
+## api
+### users
+/users/create                       (Write)
+/users/user-id/update               (Write)
+/users/user-id/delete               (Write)
+/users/user-id                      (Read)
+
+### pastebin
+/pastebin/create                    (Write)
+/pastebin/pastebin-id/update        (Write)
+/pastebin/pastebin-id/delete        (Write)
+/pastebin/pastebin-id               (Read)
+
