@@ -1,72 +1,166 @@
-# Design file hosting service
-Let's design a file hosting service like Dropbox or Google Drive. Cloud file storage enables users to store their data on remote servers. Usually, these servers are maintained by cloud storage providers and made available to users over a network (typically through the Internet). Users pay for their cloud data storage on a monthly basis.
 
-Similar Services: OneDrive, Google Drive
-
-# Functional Requirement
-User should be able to 
-- login to the file hosting service from multiple devices.
-- logout from the file hosting service from multiple devices.
-- upload documents to the file hosting service from multiple devices.
-- download documents from the file hosting service from multiple devices.
-- update documents
-- version documents
-- highly available
-- highly reliable
-- increase / decrease storage quota / plan per his/her storage needs
-- share url for the document
-
-Document contents should be synchronized across multiple devices
-Document can be edited offline. 
-
-# Non functional requirements
-- total number of users
-- max. file size allowed: 1 GB
-- max. file versions allowed: 100
-- total number of documents uploaded in year: 1,000,000,000 
-- read / write ratio for uploaded documents: 10:1
+# Assumption / Clarification
+- What type of documents are processed by this system ?
+- How many versions are we allowing ?
+- Is there any storage limit for the user ?
+- Do we teirs of the user ?
+  - Free
+  - Paid
+- Different Type of sharing
+  - Read-Only
+  - Read-Write
 
 
-- total number of documents uploaded per minute: 1,000,000,000 / (365*24*60) = ~2000 
+# Functional Requirements
+- User should be able to login / logout
+- User should be able to upload / download documents [image, pdf, doc etc.]
+- User should be able to edit / update / delete documents
+- User should be able to version documents
+- User should be able to share documents
+- Content should be synchronized on all devices after update
+- File operations should be ACID
+- User should be able to edit documents offline and when they come online, all their changes will be synced
 
-
-- total number of write requests per minute: 2000 * 100 (max. versions) = 200,000
-- total number of read requests per minute: (write request * 10) = 2,000,000
-- total write bandwidth required per minute = 200,000 * 1 GB = 2,000,000 GB = 2 PB
-- total read bandwidth required per minute = 2,000,000 * 1 GB = 20,000,000 GB = 20 PB
-
-File Storage for documents
-- per min : (total docs uploaded per min) * 1 GB = 20,000 GB
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-1. Users should be able to upload and download their files/photos from any device.
-2. Users should be able to share files or folders with other users.
-3. Our service should support automatic synchronization between devices, i.e., after updating a file on one device, it should get synchronized on all devices.
-4. The system should support storing large files up to a GB.
-5. ACID-ity is required. Atomicity, Consistency, Isolation and Durability of all file operations should be guaranteed.
-6. Our system should support offline editing. Users should be able to add/delete/modify files while offline, and as soon as they come online, all their changes should be synced to the remote servers and other online devices.
 # Non-Functional Requirements
+- Availability of the system
+  - 90.00 (36.5 days downtime)
+  - 99.00 (3.65 days downtime)
+  - 99.90 (7.31 hours downtime)
+  - 99.99 (52.1 minutes downtime)
+  - 99.999 (5.21 minuets downtime)
 
-# Assumption
+- How many concurrent users will be using the system at any given point in time ?
+100M daily active users (DAU)
+
+- How many total users will be using the system in a month / year ?
+500M total users
+
+- Document Archival ?
+
+- Document count per user
+200 files per user
+
+- Total Storage Size for Files
+= total users * files per user * max size of a file
+= 500,000,000 * 200 * 1 GB
+= 1,000,000,000 GB
+= 1000 PB
+
+- DB Size
+Total Files / Documents
+= total users * files per user * db record size
+= 500,000,000 * 200 * 500 Bytes
+= 250,000,000,000 Bytes
+= 250 GB
+  - Sharding by Location
+
+- Cache Size
+20% (DB Size)
+50 GB
+
+- Can we get Write-Read Ratio ?
+1:1
+- Max. document size allowed for upload ?
+1 GB 
+- User to Device Ratio
+1:3
+
+
+# System Design
+## APIs
+### Public
+- /users/login
+- /users/logout
+- /users/signup
+- /users/id
+
+- /documents/syncup
+
+
+- /documents/folders/list
+- /documents/folders/create
+- /documents/folders/id/update
+- /documents/folders/id/share
+
+- /documents/files/list
+- /documents/files/upload
+- /documents/files/download
+- /documents/files/id/update
+- /documents/files/id/delete
+
+### Private
+## Entities
+### Folders
+|Field          |Data Type        |Constraints / Remarks      |
+|---------------|-----------------|---------------------------|
+|id             |Integer          |PK                         |
+|folder_name    |Text             |                           |
+|folder_location|Text             |                           |
+|is_active      |Boolean          |                           |
+|user_id        |Integer          |FK                         |
+|created_at     |Timestamp        |Metadata fields            |
+|created_by     |Text             |Metadata fields            |
+|modified_at    |Timestamp        |Metadata fields            |
+|modified_by    |Text             |Metadata fields            |
+
+### Files
+|Field          |Data Type        |Constraints / Remarks      |
+|---------------|-----------------|---------------------------|
+|id             |Integer          |PK                         |
+|file_name      |Text             |                           |
+|folder_id      |Integer          |FK                         |
+|file_location  |Text             |                           |
+|is_active      |Boolean          |                           |
+|user_id        |Integer          |FK                         |
+|created_at     |Timestamp        |Metadata fields            |
+|created_by     |Text             |Metadata fields            |
+|modified_at    |Timestamp        |Metadata fields            |
+|modified_by    |Text             |Metadata fields            |
+
+
+### Users
+|Field          |Data Type        |Constraints / Remarks      |
+|---------------|-----------------|---------------------------|
+|id             |Integer          |PK                         |
+|first_name     |Text             |                           |
+|last_name      |Text             |                           |
+|is_active      |Boolean          |                           |
+|user_type_id   |Integer          |FK                         |
+|auth_engine    |Enum             |                           |
+|created_at     |Timestamp        |Metadata fields            |
+|created_by     |Text             |Metadata fields            |
+|modified_at    |Timestamp        |Metadata fields            |
+|modified_by    |Text             |Metadata fields            |
+
+### UserTypes
+|Field          |Data Type        |Constraints / Remarks      |
+|---------------|-----------------|---------------------------|
+|id             |Integer          |PK                         |
+|user_type_name |Text             |                           |
+|is_active      |Boolean          |                           |
+|created_at     |Timestamp        |Metadata fields            |
+|created_by     |Text             |Metadata fields            |
+|modified_at    |Timestamp        |Metadata fields            |
+|modified_by    |Text             |Metadata fields            |
+
+### Shares
+|Field          |Data Type        |Constraints / Remarks      |
+|---------------|-----------------|---------------------------|
+|id             |Integer          |PK                         |
+|folder_id      |Integer          |FK                         |
+|share_type     |Text / Enum      | (read,write)              |
+|email_address  |Text             |                           | 
+|is_active      |Boolean          |                           |
+|user_id        |Integer          |FK                         |
+|created_at     |Timestamp        |Metadata fields            |
+|created_by     |Text             |Metadata fields            |
+|modified_at    |Timestamp        |Metadata fields            |
+|modified_by    |Text             |Metadata fields            |
+
+
+
+
+- Partitioning
+- Caching
+- LB
+- Security, Permissions, File Sharing
