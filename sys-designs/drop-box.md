@@ -164,3 +164,7 @@ Total Files / Documents
 - Caching
 - LB
 - Security, Permissions, File Sharing
+
+
+![image](https://user-images.githubusercontent.com/81834364/120908177-ca07b080-c635-11eb-8073-2496fb094874.png)
+
